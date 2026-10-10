@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Surprise for Riya</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff0f5;
+    font-family: 'Poppins', sans-serif;
+    overscroll-behavior: none;
+    perspective: 1000px;
+  }
+
+  /* Audio Prompt Overlay */
+  .audio-prompt {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255, 240, 245, 0.95);
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+    transition: opacity 0.5s ease;
+  }
+  .audio-prompt h2 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 3rem;
+    color: #db2777;
+    margin-bottom: 20px;
+  }
+  .audio-btn {
+    background: linear-gradient(135deg, #f43f5e, #db2777);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(219, 39, 119, 0.3);
+    transition: transform 0.2s;
+  }
+  .audio-btn:active {
+    transform: scale(0.95);
+  }
+
+  /* Romantic Flowing Liquid Background */
+  .fluid-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.8;
+    mix-blend-mode: multiply;
+    will-change: transform;
+    z-index: -1;
+  }
+  @keyframes flow1 {
+    0% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(15vw, 20vh) scale(1.2); }
+    66% { transform: translate(-10vw, 30vh) scale(0.9); }
+    100% { transform: translate(0, 0) scale(1); }
+  }
+  @keyframes flow2 {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-20vw, -15vh) scale(1.3); }
+    100% { transform: translate(0, 0) scale(1); }
+  }
+  .blob-pink {
+    top: -20%; left: -10%;
+    width: 70vw; height: 70vw;
+    background: #ffb6c1;
+    animation: flow1 22s infinite ease-in-out alternate;
+  }
+  .blob-red {
+    bottom: -20%; right: -10%;
+    width: 80vw; height: 80vw;
+    background: #ff8fa3;
+    animation: flow2 26s infinite ease-in-out alternate;
+  }
+  .blob-peach {
+    top: 20%; left: 20%;
+    width: 60vw; height: 60vw;
+    background: #ffdab9;
+    animation: flow1 24s infinite ease-in-out alternate-reverse;
+  }
+
+  /* Interactive Outer Envelope */
+  .envelope-wrapper {
+    position: relative;
+    width: 320px;
+    height: 220px;
+    transition: transform 1s ease-in-out;
+    z-index: 100;
+  }
+  .envelope {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #fca5a5; /* warm rose card */
+    border-radius: 0 0 16px 16px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    z-index: 10;
+  }
+  /* Back cover flap and triangular faces */
+  .envelope::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 0;
+    border-left: 160px solid transparent;
+    border-right: 160px solid transparent;
+    border-bottom: 110px solid #f87171;
+    border-radius: 0 0 16px 16px;
+    z-index: 12;
+  }
+  .envelope::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 0; height: 0;
+    border-left: 160px solid #ef4444;
+    border-top: 110px solid transparent;
+    border-bottom: 110px solid transparent;
+    border-radius: 0 0 0 16px;
+    z-index: 11;
+  }
+  .envelope-right {
+    position: absolute;
+    top: 0; right: 0;
+    width: 0; height: 0;
+    border-right: 160px solid #ef4444;
+    border-top: 110px solid transparent;
+    border-bottom: 110px solid transparent;
+    border-radius: 0 0 16px 0;
+    z-index: 11;
+    pointer-events: none;
+  }
+  .flap {
+    position: absolute;
+    top: 0; left: 0;
+    width: 0; height: 0;
+    border-left: 160px solid transparent;
+    border-right: 160px solid transparent;
+    border-top: 115px solid #ef4444;
+    transform-origin: top;
+    transition: transform 0.6s ease-in-out;
+    z-index: 14;
+  }
+  .open .flap {
+    transform: rotateX(180deg);
+    z-index: 9;
+  }
+
+  /* Wax Seal 3-touch mechanism */
+  .wax-seal {
+    position: absolute;
+    top: 85px; left: 130px;
+    width: 60px; height: 60px;
+    background: radial-gradient(circle, #b91c1c, #991b1b, #7f1d1d);
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 15;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fca5a5;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transform-origin: center;
+    transition: transform 0.1s, opacity 0.5s;
+    user-select: none;
+  }
+  .wax-seal::after {
+    content: '❤️';
+    font-size: 1.5rem;
+  }
+  .wax-seal.broken {
+    animation: breakSeal 0.5s forwards;
+    pointer-events: none;
+  }
+  @keyframes breakSeal {
+    0% { transform: scale(1); opacity: 1;}
+    50% { transform: scale(1.1) rotate(15deg); opacity: 0.8;}
+    100% { transform: scale(0) rotate(-45deg); opacity: 0; display: none;}
+  }
+
+  /* Heart particles upon impact tap */
+  .particle {
+    position: absolute;
+    color: #e11d48;
+    font-size: 1.2rem;
+    pointer-events: none;
+    animation: pingHeart 0.6s ease-out forwards;
+    z-index: 30;
+  }
+  @keyframes pingHeart {
+    0% { transform: translate(0, 0) scale(0.5); opacity: 1; }
+    100% { transform: translate(var(--x), var(--y)) scale(1.5); opacity: 0; }
+  }
+
+  /* Instructions hint */
+  .hint {
+    position: absolute;
+    bottom: -60px;
+    width: 100%;
+    text-align: center;
+    color: #be123c;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    animation: bounce 1.5s infinite;
+    text-shadow: 0 2px 4px rgba(255,255,255,0.5);
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  /* Sliding Handwritten Letter inside Polaroid */
+  .letter-card {
+    position: absolute;
+    top: 5px; left: 10px;
+    width: 300px;
+    height: 200px;
+    background: #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transform: translateY(0);
+    transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1), 
+                width 1s cubic-bezier(0.25, 1, 0.5, 1), 
+                height 1s cubic-bezier(0.25, 1, 0.5, 1), 
+                top 1s cubic-bezier(0.25, 1, 0.5, 1), 
+                left 1s cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 5;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .open .letter-card {
+    transform: translateY(-240px); /* slide upward on open */
+    z-index: 13;
+  }
+  .open .letter-card.full-screen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    transform: translateY(0);
+    border-radius: 0;
+    box-shadow: none;
+    z-index: 500;
+    background: #fff;
+  }
+  
+  .letter-img {
+    width: 92%;
+    height: auto;
+    max-height: 90%;
+    object-fit: contain;
+    transition: max-height 1s ease-in-out, width 1s ease-in-out;
+  }
+  .full-screen .letter-img {
+    width: auto;
+    max-width: 90vw;
+    max-height: 90vh;
+  }
+
+  /* Confetti overlay */
+  .confetti-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Background Music Audio -->
+  <audio id="bg-music" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Tap Prompt to enable user music activation on mobile iOS/Android standard policy -->
+  <div class="audio-prompt" id="audio-prompt">
+    <h2>An Envelope for Riya 💌</h2>
+    <p>Please turn on your audio for this surprise!</p>
+    <button class="audio-btn" onclick="startSurprise()">Open Surprise</button>
+  </div>
+
+  <!-- Fluid aurora visual containers -->
+  <div class="fluid-blob blob-pink"></div>
+  <div class="fluid-blob blob-red"></div>
+  <div class="fluid-blob blob-peach"></div>
+
+  <!-- Interactive wrapper envelope and wax stamp -->
+  <div class="envelope-wrapper" id="env-wrapper">
+    
+    <div class="envelope" id="envelope">
+      <div class="flap"></div>
+      <div class="envelope-right"></div>
+      
+      <!-- Wax seal with counter text -->
+      <div class="wax-seal" id="wax-seal"></div>
+
+      <!-- Letter photo container -->
+      <div class="letter-card" id="letter-card">
+        <img class="letter-img" id="letter-img" src="image_1.png" alt="Handwritten Letter from the Heart">
+      </div>
+    </div>
+    
+    <div class="hint" id="hint-text">Tap wax seal to open! (3)</div>
+  </div>
+
+  <canvas class="confetti-canvas" id="confetti-canvas"></canvas>
+
+  <!-- Interactive behavior script -->
+  <script>
+    let touchCount = 0;
+    const targetTouches = 3;
+    const audio = document.getElementById('bg-music');
+    const seal = document.getElementById('wax-seal');
+    const hint = document.getElementById('hint-text');
+    const wrapper = document.getElementById('env-wrapper');
+    const letter = document.getElementById('letter-card');
+    
+    function startSurprise() {
+      // Play audio on active interaction (browser permission safe)
+      audio.play().catch(e => console.log('Audio autoplay blocked or errored:', e));
+      document.getElementById('audio-prompt').style.opacity = '0';
+      setTimeout(() => {
+        document.getElementById('audio-prompt').style.display = 'none';
+      }, 500);
+    }
+
+    // Seal Tap Event triggers particle burst & 3-stage counters
+    seal.addEventListener('pointerdown', (e) => {
+      if (touchCount >= targetTouches) return;
+      
+      touchCount++;
+      createHeartBurst(e);
+      
+      // Visual tap impact animation
+      seal.style.transform = 'scale(0.9)';
+      setTimeout(() => {
+        seal.style.transform = 'scale(1.05)';
+      }, 80);
+
+      // Trigger interactive hint counters
+      const remaining = targetTouches - touchCount;
+      if (remaining > 0) {
+        hint.innerText = `Keep tapping! (${remaining})`;
+      } else {
+        hint.style.opacity = '0';
+        triggerEnvelopeOpening();
+      }
+    });
+
+    function createHeartBurst(e) {
+      const rect = seal.getBoundingClientRect();
+      const numHearts = 6;
+      for (let i = 0; i < numHearts; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.innerText = i % 2 === 0 ? '❤️' : '💖';
+        p.style.left = `${e.clientX || (rect.left + rect.width / 2)}px`;
+        p.style.top = `${e.clientY || (rect.top + rect.height / 2)}px`;
+        
+        // Circular direction for animation offsets
+        const angle = (i / numHearts) * Math.PI * 2;
+        const dist = 50 + Math.random() * 40;
+        p.style.setProperty('--x', `${Math.cos(angle) * dist}px`);
+        p.style.setProperty('--y', `${Math.sin(angle) * dist}px`);
+        
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 600);
+      }
+    }
+
+    // Opening progression
+    function triggerEnvelopeOpening() {
+      seal.classList.add('broken');
+      
+      // Allow the seal to pop before flapping open
+      setTimeout(() => {
+        wrapper.classList.add('open');
+        
+        // Settle slide duration, then convert Polaroid letter into Full-Screen visual focus
+        setTimeout(() => {
+          letter.classList.add('full-screen');
+          triggerCelebrationConfetti();
+        }, 1500);
+      }, 450);
+    }
+
+    function triggerCelebrationConfetti() {
+      // Direct physics-based celebratory burst once letter takes screen focus
+      const duration = 3000;
+      const end = Date.now() + duration;
+      const confettiCanvas = document.getElementById('confetti-canvas');
+      
+      (function frame() {
+        confetti({
+          particleCount: 5,
+          angle: 60,
+          spread: 60,
+          origin: { x: 0, y: 0.8 },
+          colors: ['#f43f5e', '#db2777', '#ff69b4', '#ffffff', '#ffd700'],
+          zIndex: 1000
+        });
+        confetti({
+          particleCount: 5,
+          angle: 120,
+          spread: 60,
+          origin: { x: 1, y: 0.8 },
+          colors: ['#f43f5e', '#db2777', '#ff69b4', '#ffffff', '#ffd700'],
+          zIndex: 1000
+        });
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      }());
+    }
+  </script>
+</body>
+</html>
